@@ -34,21 +34,21 @@ public class ItemRepositoryImpl implements ItemRepository {
         if (list == null || !list.stream().map(Item::getId).collect(Collectors.toList()).contains(item.getId())) {
             throw new WrongUserChangeItemException("Wrong user can't change other users items");
         }
-        if (item.getName() == null & item.getDescription() == null) {
+        if (item.getName() == null && item.getDescription() == null) {
             Item i = getItem(item.getId());
             i.setAvailable(item.getAvailable());
             item = i;
-        } else if (item.getAvailable() == null & item.getDescription() == null) {
+        } else if (item.getAvailable() == null && item.getDescription() == null) {
             Item i = getItem(item.getId());
             i.setName(item.getName());
             item = i;
-        } else if (item.getAvailable() == null & item.getName() == null) {
+        } else if (item.getAvailable() == null && item.getName() == null) {
             Item i = getItem(item.getId());
             i.setDescription(item.getDescription());
             item = i;
         }
         Item finalItem = item;
-        List<Item> newList = list.stream().map(i -> i.getId() == finalItem.getId() ? finalItem : i).collect(Collectors.toList());
+        List<Item> newList = list.stream().map(i -> Objects.equals(i.getId(), finalItem.getId()) ? finalItem : i).collect(Collectors.toList());
         map.replace(userId, newList);
         return item;
     }
@@ -57,7 +57,7 @@ public class ItemRepositoryImpl implements ItemRepository {
     public Item getItem(Long id) {
         List<Item> result = getItemList();
         return result.stream()
-                .filter(item -> item.getId() == id)
+                .filter(item -> Objects.equals(item.getId(), id))
                 .findFirst()
                 .orElse(null);
     }
@@ -74,7 +74,7 @@ public class ItemRepositoryImpl implements ItemRepository {
         List<Item> result = getItemList();
         List<Item> clean = result.stream().filter(i -> i.getAvailable() != null).collect(Collectors.toList());
         return clean.stream()
-                .filter(item -> item.getAvailable() & (item.getName().toLowerCase().contains(text) || item.getDescription().toLowerCase().contains(text)))
+                .filter(item -> item.getAvailable() && (item.getName().toLowerCase().contains(text) || item.getDescription().toLowerCase().contains(text)))
                 .collect(Collectors.toList());
     }
 

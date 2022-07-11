@@ -37,13 +37,13 @@ public class UserRepositoryImpl implements UserRepository {
 
     @Override
     public User updateUser(User user) {
-        if (user.getEmail() == null & user.getName() != null) {
+        if (user.getEmail() == null && user.getName() != null) {
             User u = map.get(user.getId());
             u.setName(user.getName());
             user = u;
         }
 
-        if (user.getEmail() != null & user.getName() == null) {
+        if (user.getEmail() != null && user.getName() == null) {
             User u = map.get(user.getId());
             u.setEmail(user.getEmail());
             user = u;
