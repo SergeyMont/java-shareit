@@ -30,8 +30,7 @@ public class ItemController {
     }
 
     @PostMapping
-    public ItemDto createItem(@RequestHeader("X-Sharer-User-Id") Long userId
-            , @RequestBody ItemDto itemDto) {
+    public ItemDto createItem(@RequestHeader("X-Sharer-User-Id") Long userId, @RequestBody ItemDto itemDto) {
         if (!userService.isUserCreated(userId)) {
             throw new UserNotFoundException("User in not created");
         }
@@ -42,9 +41,7 @@ public class ItemController {
     }
 
     @PatchMapping("/{itemId}")
-    public ItemDto updateItemById(@RequestHeader("X-Sharer-User-Id") Long userId
-            , @PathVariable("itemId") Long itemId
-            , @RequestBody ItemDto itemDto) {
+    public ItemDto updateItemById(@RequestHeader("X-Sharer-User-Id") Long userId, @PathVariable("itemId") Long itemId, @RequestBody ItemDto itemDto) {
         itemDto.setId(itemId);
         return itemService.updateItemDto(itemDto, userId);
     }
