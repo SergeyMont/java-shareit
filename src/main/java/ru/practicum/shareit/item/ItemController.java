@@ -34,7 +34,7 @@ public class ItemController {
         if (!userService.isUserCreated(userId)) {
             throw new UserNotFoundException("User in not created");
         }
-        if (itemDto.getName().isEmpty() || itemDto.getDescription() == null | itemDto.getAvailable() == null) {
+        if (itemDto.getName().isEmpty() || itemDto.getDescription() == null || itemDto.getAvailable() == null) {
             throw new ItemValidationException("Name and Description can't be empty");
         }
         return itemService.createItemDto(itemDto, userId);
