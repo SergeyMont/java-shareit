@@ -5,13 +5,10 @@ import ru.practicum.shareit.user.User;
 
 import java.time.LocalDateTime;
 
-/**
- * // TODO .
- */
 @Data
 public class ItemRequest {
-    Long id;
-    String description;
-    User requestor;
-    LocalDateTime crated;
+    private Long id;
+    private String description;
+    private User requestor;
+    private LocalDateTime crated;
 }

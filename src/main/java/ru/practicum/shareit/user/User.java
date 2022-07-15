@@ -4,15 +4,12 @@ import lombok.Data;
 
 import javax.validation.constraints.Email;
 
-/**
- * // TODO .
- */
 @Data
 public class User {
-    Long id;
-    String name;
+    private Long id;
+    private String name;
     @Email
-    String email;
+    private String email;
 
     public User(Long id, String name, String email) {
         this.id = id;

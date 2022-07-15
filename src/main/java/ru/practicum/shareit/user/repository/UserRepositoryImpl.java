@@ -11,7 +11,7 @@ import java.util.Map;
 @Component
 public class UserRepositoryImpl implements UserRepository {
     private Map<Long, User> map = new HashMap<>();
-    private Long counter = Long.valueOf(0);
+    private Long counter = 0L;
 
     @Override
     public User getUserById(Long id) {
@@ -38,9 +38,9 @@ public class UserRepositoryImpl implements UserRepository {
     @Override
     public User updateUser(User user) {
         if (user.getEmail() == null && user.getName() != null) {
-            User u = map.get(user.getId());
-            u.setName(user.getName());
-            user = u;
+            User innerUser = map.get(user.getId());
+            innerUser.setName(user.getName());
+            user = innerUser;
         }
 
         if (user.getEmail() != null && user.getName() == null) {

@@ -10,9 +10,7 @@ import javax.validation.Valid;
 import java.util.List;
 import java.util.stream.Collectors;
 
-/**
- * // TODO .
- */
+
 @RestController
 @RequestMapping(path = "/users")
 @AllArgsConstructor
@@ -31,14 +29,14 @@ public class UserController {
 
     @PostMapping
     public UserDto createUser(@Valid @RequestBody UserDto userDto) {
-        emailValidation(userDto);
+        validationUserEmail(userDto);
         if (userDto.getEmail() == null) {
             throw new ValidationEmailNullException("Email should be not null");
         }
         return userService.createUserDto(userDto);
     }
 
-    private void emailValidation(UserDto userDto) {
+    private void validationUserEmail(UserDto userDto) {
         List<String> list = userService.getAllUserDto().stream().map(UserDto::getEmail).collect(Collectors.toList());
         if (userDto.getEmail() != null) {
             for (int i = 0; i < list.size(); i++) {
@@ -51,7 +49,7 @@ public class UserController {
 
     @PatchMapping("/{userId}")
     public UserDto updateUser(@Valid @PathVariable("userId") Long userId, @RequestBody UserDto userDto) {
-        emailValidation(userDto);
+        validationUserEmail(userDto);
         userDto.setId(userId);
         return userService.updateUserDto(userDto);
     }
