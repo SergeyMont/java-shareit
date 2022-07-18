@@ -29,14 +29,14 @@ public class UserController {
 
     @PostMapping
     public UserDto createUser(@Valid @RequestBody UserDto userDto) {
-        validationUserEmail(userDto);
+        validateUserEmail(userDto);
         if (userDto.getEmail() == null) {
             throw new ValidationEmailNullException("Email should be not null");
         }
         return userService.createUserDto(userDto);
     }
 
-    private void validationUserEmail(UserDto userDto) {
+    private void validateUserEmail(UserDto userDto) {
         List<String> list = userService.getAllUserDto().stream().map(UserDto::getEmail).collect(Collectors.toList());
         if (userDto.getEmail() != null) {
             for (int i = 0; i < list.size(); i++) {
@@ -49,7 +49,7 @@ public class UserController {
 
     @PatchMapping("/{userId}")
     public UserDto updateUser(@Valid @PathVariable("userId") Long userId, @RequestBody UserDto userDto) {
-        validationUserEmail(userDto);
+        validateUserEmail(userDto);
         userDto.setId(userId);
         return userService.updateUserDto(userDto);
     }
