@@ -38,7 +38,7 @@ public class BookingController {
     @GetMapping("{id}")
     public BookingDto getById(@RequestHeader("X-Sharer-User-Id") Long userId, @PathVariable Long id) {
         Booking booking = bookingService.getBooking(id);
-        if (!(booking.getBooker().getId() == userId || booking.getItem().getOwner() == userId)) {
+        if (!(Objects.equals(booking.getBooker().getId(), userId) || Objects.equals(booking.getItem().getOwner(), userId))) {
             throw new ValidationBookingOwnerException("You are not owner or booker");
         }
         return BookingMapper.toBookingDto(booking);
@@ -74,7 +74,7 @@ public class BookingController {
                                    @RequestHeader("X-Sharer-User-Id") Long userId,
                                    @PathVariable("bookingId") Long bookingId) {
         Booking booking = bookingService.getBooking(bookingId);
-        if (booking.getItem().getOwner() != userId) throw new ValidationBookingOwnerException("You are not owner");
+        if (!Objects.equals(booking.getItem().getOwner(), userId)) throw new ValidationBookingOwnerException("You are not owner");
         if (booking.getStatus().equals(Status.APPROVED))
             throw new ItemValidationException("Item is approved status of booking");
         booking.setStatus(approved ? Status.APPROVED : Status.REJECTED);
