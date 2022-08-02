@@ -43,7 +43,7 @@ public class BookingValidationManager {
             throw new ValidationBookingOwnerException("You are not owner");
     }
 
-    public void validateBookingCreation(ExternalBookingDto bookingDto, Long userId){
+    public void validateBookingCreation(ExternalBookingDto bookingDto, Long userId) {
         Item item = itemRepository.findById(bookingDto.getItemId()).get();
         if (!item.getAvailable()) throw new ItemValidationException("Item isn't available");
 
