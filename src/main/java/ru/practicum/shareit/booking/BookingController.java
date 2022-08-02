@@ -6,7 +6,6 @@ import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.BookingMapper;
 import ru.practicum.shareit.booking.dto.ExternalBookingDto;
-import ru.practicum.shareit.user.UserService;
 
 import javax.validation.Valid;
 import java.util.List;
