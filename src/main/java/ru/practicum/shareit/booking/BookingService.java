@@ -3,8 +3,12 @@ package ru.practicum.shareit.booking;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.booking.dto.BookingMapper;
+import ru.practicum.shareit.booking.dto.ExternalBookingDto;
 import ru.practicum.shareit.booking.dto.ShortBookingDto;
 import ru.practicum.shareit.booking.repository.SpringBookingRepository;
+import ru.practicum.shareit.item.exceptions.ItemValidationException;
+import ru.practicum.shareit.item.repository.SpringItemRepository;
+import ru.practicum.shareit.user.repository.SpringUserRepository;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -13,16 +17,26 @@ import java.util.List;
 @AllArgsConstructor
 public class BookingService {
     private final SpringBookingRepository bookingRepository;
+    private final SpringItemRepository itemRepository;
+    private final SpringUserRepository userRepository;
 
     public Booking getBooking(Long id) {
         return bookingRepository.findById(id).get();
     }
 
-    public Booking createBooking(Booking booking) {
+    public Booking createBooking(ExternalBookingDto bookingDto, Long userId) {
+        Booking booking = BookingMapper.toBooking(bookingDto);
+        booking.setBooker(userRepository.findById(userId).get());
+        booking.setItem(itemRepository.findById(bookingDto.getItemId()).get());
+        booking.setStatus(Status.WAITING);
         return bookingRepository.save(booking);
     }
 
-    public Booking saveBooking(Booking booking) {
+    public Booking saveBooking(Long bookingId, boolean approved) {
+        Booking booking = bookingRepository.findById(bookingId).get();
+        if (booking.getStatus().equals(Status.APPROVED))
+            throw new ItemValidationException("Item is approved status of booking");
+        booking.setStatus(approved ? Status.APPROVED : Status.REJECTED);
         return bookingRepository.save(booking);
     }
 

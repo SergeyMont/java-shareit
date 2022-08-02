@@ -9,9 +9,9 @@ import java.time.LocalDateTime;
 @Data
 public class ExternalBookingDto {
     @FutureOrPresent
-    LocalDateTime start;
+    private LocalDateTime start;
     @FutureOrPresent
-    LocalDateTime end;
+    private LocalDateTime end;
     @NotNull
-    Long itemId;
+    private Long itemId;
 }
