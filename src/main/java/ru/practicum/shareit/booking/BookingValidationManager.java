@@ -61,4 +61,8 @@ public class BookingValidationManager {
             throw new UserNotFoundException("User in not created");
         }
     }
+
+    public void validateUser(Long userId){
+        if(!userService.isUserCreated(userId)){throw new UserNotFoundException("User in not created");}
+    }
 }

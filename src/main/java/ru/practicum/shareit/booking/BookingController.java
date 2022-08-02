@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.BookingMapper;
 import ru.practicum.shareit.booking.dto.ExternalBookingDto;
-
+import ru.practicum.shareit.user.UserService;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -44,6 +44,7 @@ public class BookingController {
     @GetMapping
     public List<BookingDto> getAllByUser(@RequestHeader("X-Sharer-User-Id") Long userId, @RequestParam(defaultValue = "ALL") String state) {
         validationManager.validateState(state);
+        validationManager.validateUser(userId);
         return bookingService.getAllByUser(userId, state)
                 .stream()
                 .map(BookingMapper::toBookingDto)
@@ -53,6 +54,7 @@ public class BookingController {
     @GetMapping("/owner")
     public List<BookingDto> getAllByOwner(@RequestHeader("X-Sharer-User-Id") Long userId, @RequestParam(defaultValue = "ALL") String state) {
         validationManager.validateState(state);
+        validationManager.validateUser(userId);
         return bookingService.getAllByOwner(userId, state)
                 .stream()
                 .map(BookingMapper::toBookingDto)
