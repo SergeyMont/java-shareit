@@ -19,12 +19,16 @@ public class BookingService {
     private final SpringBookingRepository bookingRepository;
     private final SpringItemRepository itemRepository;
     private final SpringUserRepository userRepository;
+    private final BookingValidationManager validationManager;
 
-    public Booking getBooking(Long id) {
-        return bookingRepository.findById(id).get();
+    public Booking getBooking(Long id, Long userId) {
+        Booking booking = bookingRepository.findById(id).get();
+        validationManager.validateBookingOwnerBooker(userId, booking);
+        return booking;
     }
 
     public Booking createBooking(ExternalBookingDto bookingDto, Long userId) {
+        validationManager.validateBookingCreation(bookingDto, userId);
         Booking booking = BookingMapper.toBooking(bookingDto);
         booking.setBooker(userRepository.findById(userId).get());
         booking.setItem(itemRepository.findById(bookingDto.getItemId()).get());
@@ -32,8 +36,9 @@ public class BookingService {
         return bookingRepository.save(booking);
     }
 
-    public Booking saveBooking(Long bookingId, boolean approved) {
+    public Booking saveBooking(Long bookingId, boolean approved, Long userId) {
         Booking booking = bookingRepository.findById(bookingId).get();
+        validationManager.validateBookingOwner(booking, userId);
         if (booking.getStatus().equals(Status.APPROVED))
             throw new ItemValidationException("Item is approved status of booking");
         booking.setStatus(approved ? Status.APPROVED : Status.REJECTED);
@@ -41,6 +46,8 @@ public class BookingService {
     }
 
     public List<Booking> getAllByUser(Long userId, String state) {
+        validationManager.validateState(state);
+        validationManager.validateUser(userId);
         LocalDateTime now = LocalDateTime.now();
         switch (state) {
             case "WAITING":
@@ -59,6 +66,8 @@ public class BookingService {
     }
 
     public List<Booking> getAllByOwner(Long userId, String state) {
+        validationManager.validateState(state);
+        validationManager.validateUser(userId);
         LocalDateTime now = LocalDateTime.now();
         switch (state) {
             case "WAITING":

@@ -20,12 +20,10 @@ import java.util.Objects;
 @Component
 @AllArgsConstructor
 public class BookingValidationManager {
-    private final BookingService bookingService;
     private final UserService userService;
     private final SpringItemRepository itemRepository;
 
-    public void validateBookingOwnerBooker(Long bookingId, Long userId) {
-        Booking booking = bookingService.getBooking(bookingId);
+    public void validateBookingOwnerBooker(Long userId, Booking booking) {
         if (!(Objects.equals(booking.getBooker().getId(), userId) || Objects.equals(booking.getItem().getOwner(), userId))) {
             throw new ValidationBookingOwnerException("You are not owner or booker");
         }
@@ -37,8 +35,7 @@ public class BookingValidationManager {
         }
     }
 
-    public void validateBookingOwner(Long bookingId, Long userId) {
-        Booking booking = bookingService.getBooking(bookingId);
+    public void validateBookingOwner(Booking booking, Long userId) {
         if (!Objects.equals(booking.getItem().getOwner(), userId))
             throw new ValidationBookingOwnerException("You are not owner");
     }

@@ -18,17 +18,14 @@ import java.util.stream.Collectors;
 @RequestMapping(path = "/bookings")
 public class BookingController {
     private final BookingService bookingService;
-    private final BookingValidationManager validationManager;
 
     @GetMapping("{id}")
     public BookingDto getById(@RequestHeader("X-Sharer-User-Id") Long userId, @PathVariable Long id) {
-        validationManager.validateBookingOwnerBooker(id, userId);
-        return BookingMapper.toBookingDto(bookingService.getBooking(id));
+        return BookingMapper.toBookingDto(bookingService.getBooking(id, userId));
     }
 
     @PostMapping
     public BookingDto createBooking(@Valid @RequestHeader("X-Sharer-User-Id") Long userId, @RequestBody ExternalBookingDto bookingDto) {
-        validationManager.validateBookingCreation(bookingDto, userId);
         return BookingMapper.toBookingDto(bookingService.createBooking(bookingDto, userId));
     }
 
@@ -36,14 +33,11 @@ public class BookingController {
     public BookingDto updateStatus(@RequestParam boolean approved,
                                    @RequestHeader("X-Sharer-User-Id") Long userId,
                                    @PathVariable("bookingId") Long bookingId) {
-        validationManager.validateBookingOwner(bookingId, userId);
-        return BookingMapper.toBookingDto(bookingService.saveBooking(bookingId, approved));
+        return BookingMapper.toBookingDto(bookingService.saveBooking(bookingId, approved, userId));
     }
 
     @GetMapping
     public List<BookingDto> getAllByUser(@RequestHeader("X-Sharer-User-Id") Long userId, @RequestParam(defaultValue = "ALL") String state) {
-        validationManager.validateState(state);
-        validationManager.validateUser(userId);
         return bookingService.getAllByUser(userId, state)
                 .stream()
                 .map(BookingMapper::toBookingDto)
@@ -52,8 +46,6 @@ public class BookingController {
 
     @GetMapping("/owner")
     public List<BookingDto> getAllByOwner(@RequestHeader("X-Sharer-User-Id") Long userId, @RequestParam(defaultValue = "ALL") String state) {
-        validationManager.validateState(state);
-        validationManager.validateUser(userId);
         return bookingService.getAllByOwner(userId, state)
                 .stream()
                 .map(BookingMapper::toBookingDto)
