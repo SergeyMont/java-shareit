@@ -2,11 +2,11 @@ package ru.practicum.shareit.item;
 
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.shareit.item.dto.ItemDto;
-import ru.practicum.shareit.item.exceptions.ItemValidationException;
-import ru.practicum.shareit.item.exceptions.UserNotFoundException;
+import ru.practicum.shareit.booking.BookingService;
+import ru.practicum.shareit.item.dto.*;
 import ru.practicum.shareit.user.UserService;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -15,25 +15,20 @@ import java.util.List;
 public class ItemController {
     private final ItemService itemService;
     private final UserService userService;
+    private final BookingService bookingService;
 
     @GetMapping("/{itemId}")
-    public ItemDto findItemById(@PathVariable("itemId") Long itemId) {
-        return itemService.getItemById(itemId);
+    public ItemCommentDto findItemById(@PathVariable("itemId") Long itemId, @RequestHeader("X-Sharer-User-Id") Long userId) {
+        return itemService.getItemById(itemId, userId);
     }
 
     @GetMapping
-    public List<ItemDto> findAllItemsByUserId(@RequestHeader("X-Sharer-User-Id") Long userId) {
+    public List<ItemCommentDto> findAllItemsByUserId(@RequestHeader("X-Sharer-User-Id") Long userId) {
         return itemService.getAllByUserId(userId);
     }
 
     @PostMapping
     public ItemDto createItem(@RequestHeader("X-Sharer-User-Id") Long userId, @RequestBody ItemDto itemDto) {
-        if (!userService.isUserCreated(userId)) {
-            throw new UserNotFoundException("User in not created");
-        }
-        if (itemDto.getName().isEmpty() || itemDto.getDescription() == null || itemDto.getAvailable() == null) {
-            throw new ItemValidationException("Name and Description can't be empty");
-        }
         return itemService.createItemDto(itemDto, userId);
     }
 
@@ -48,4 +43,10 @@ public class ItemController {
         return itemService.searchItemByText(text);
     }
 
+    @PostMapping("{id}/comment")
+    public CommentDto addComment(@PathVariable Long id,
+                                 @Valid @RequestBody ExternalCommentDto commentDto,
+                                 @RequestHeader("X-Sharer-User-Id") Long userId) {
+        return CommentMapper.toCommentDto(itemService.addComment(id, commentDto, userId));
+    }
 }
