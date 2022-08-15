@@ -51,7 +51,7 @@ class BookingControllerTest {
 
     @Test
     void createBooking() throws Exception {
-        when(bookingService.createBooking( any(), anyLong())).thenReturn(booking);
+        when(bookingService.createBooking(any(), anyLong())).thenReturn(booking);
         mvc.perform(post("/bookings")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(BookingMapper.toBookingDto(booking)))

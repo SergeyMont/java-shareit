@@ -54,6 +54,7 @@ class BookingServiceTest {
     void getBooking() {
         assertEquals(booking, bookingService.getBooking(booking.getId(), booking.getBooker().getId()));
     }
+
     @Test
     void testGetWrongUser() {
         assertThrows(ValidationBookingOwnerException.class, () -> bookingService.getBooking(booking.getId(), 100L));

@@ -46,7 +46,7 @@ class ItemRequestServiceTest {
     void addNewRequest() {
         ExternalRequestDto externalRequestDto = ExternalRequestDto.builder().description("text").build();
         ItemRequestDto itemRequest1 = itemRequestService.addNewRequest(itemRequest.getRequester().getId(), externalRequestDto);
-        assertEquals(RequestMapper.toItemRequestDto(itemRequestRepository.findById(itemRequest1.getId()).orElseThrow()) , itemRequest1);
+        assertEquals(RequestMapper.toItemRequestDto(itemRequestRepository.findById(itemRequest1.getId()).orElseThrow()), itemRequest1);
     }
 
     @Test
