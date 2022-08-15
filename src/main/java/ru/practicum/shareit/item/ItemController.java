@@ -1,10 +1,10 @@
 package ru.practicum.shareit.item;
 
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.shareit.booking.BookingService;
 import ru.practicum.shareit.item.dto.*;
-import ru.practicum.shareit.user.UserService;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -14,8 +14,6 @@ import java.util.List;
 @AllArgsConstructor
 public class ItemController {
     private final ItemService itemService;
-    private final UserService userService;
-    private final BookingService bookingService;
 
     @GetMapping("/{itemId}")
     public ItemCommentDto findItemById(@PathVariable("itemId") Long itemId, @RequestHeader("X-Sharer-User-Id") Long userId) {
@@ -23,8 +21,11 @@ public class ItemController {
     }
 
     @GetMapping
-    public List<ItemCommentDto> findAllItemsByUserId(@RequestHeader("X-Sharer-User-Id") Long userId) {
-        return itemService.getAllByUserId(userId);
+    public List<ItemCommentDto> findAllItemsByUserId(@RequestHeader("X-Sharer-User-Id") Long userId,
+                                                     @RequestParam(defaultValue = "0") int from,
+                                                     @RequestParam(defaultValue = "10") int size) {
+        Pageable pageable = PageRequest.of(from, size);
+        return itemService.getAllByUserId(userId, pageable);
     }
 
     @PostMapping
@@ -39,8 +40,11 @@ public class ItemController {
     }
 
     @GetMapping("/search")
-    public List<ItemDto> searchByText(@RequestParam String text) {
-        return itemService.searchItemByText(text);
+    public List<ItemDto> searchByText(@RequestParam String text,
+                                      @RequestParam(defaultValue = "0") int from,
+                                      @RequestParam(defaultValue = "10") int size) {
+        Pageable pageable = PageRequest.of(from, size);
+        return itemService.searchItemByText(text, pageable);
     }
 
     @PostMapping("{id}/comment")

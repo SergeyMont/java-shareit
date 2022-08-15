@@ -1,6 +1,7 @@
 package ru.practicum.shareit.booking;
 
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.booking.dto.BookingMapper;
 import ru.practicum.shareit.booking.dto.ExternalBookingDto;
@@ -45,43 +46,43 @@ public class BookingService {
         return bookingRepository.save(booking);
     }
 
-    public List<Booking> getAllByUser(Long userId, String state) {
+    public List<Booking> getAllByUser(Long userId, String state, Pageable pageable) {
         validationManager.validateState(state);
         validationManager.validateUser(userId);
         LocalDateTime now = LocalDateTime.now();
         switch (state) {
             case "WAITING":
-                return bookingRepository.findAllByBookerIdAndStatusOrderByStartDesc(userId, Status.WAITING);
+                return bookingRepository.findAllByBookerIdAndStatusOrderByStartDesc(userId, Status.WAITING, pageable);
             case "REJECTED":
-                return bookingRepository.findAllByBookerIdAndStatusOrderByStartDesc(userId, Status.REJECTED);
+                return bookingRepository.findAllByBookerIdAndStatusOrderByStartDesc(userId, Status.REJECTED, pageable);
             case "PAST":
-                return bookingRepository.findAllByBookerIdAndEndBeforeOrderByStartDesc(userId, now);
+                return bookingRepository.findAllByBookerIdAndEndBeforeOrderByStartDesc(userId, now, pageable);
             case "FUTURE":
-                return bookingRepository.findAllByBookerIdAndStartAfterOrderByStartDesc(userId, now);
+                return bookingRepository.findAllByBookerIdAndStartAfterOrderByStartDesc(userId, now, pageable);
             case "CURRENT":
-                return bookingRepository.findAllByBookerIdAndStartBeforeAndEndAfterOrderByStartDesc(userId, now, now);
+                return bookingRepository.findAllByBookerIdAndStartBeforeAndEndAfterOrderByStartDesc(userId, now, now, pageable);
             default:
-                return bookingRepository.findAllByBookerIdOrderByStartDesc(userId);
+                return bookingRepository.findAllByBookerIdOrderByStartDesc(userId, pageable);
         }
     }
 
-    public List<Booking> getAllByOwner(Long userId, String state) {
+    public List<Booking> getAllByOwner(Long userId, String state, Pageable pageable) {
         validationManager.validateState(state);
         validationManager.validateUser(userId);
         LocalDateTime now = LocalDateTime.now();
         switch (state) {
             case "WAITING":
-                return bookingRepository.findAllByItemOwnerAndStatusOrderByStartDesc(userId, Status.WAITING);
+                return bookingRepository.findAllByItemOwnerAndStatusOrderByStartDesc(userId, Status.WAITING, pageable);
             case "REJECTED":
-                return bookingRepository.findAllByItemOwnerAndStatusOrderByStartDesc(userId, Status.REJECTED);
+                return bookingRepository.findAllByItemOwnerAndStatusOrderByStartDesc(userId, Status.REJECTED, pageable);
             case "PAST":
-                return bookingRepository.findAllByItemOwnerAndEndBeforeOrderByStartDesc(userId, now);
+                return bookingRepository.findAllByItemOwnerAndEndBeforeOrderByStartDesc(userId, now, pageable);
             case "FUTURE":
-                return bookingRepository.findAllByItemOwnerAndStartAfterOrderByStartDesc(userId, now);
+                return bookingRepository.findAllByItemOwnerAndStartAfterOrderByStartDesc(userId, now, pageable);
             case "CURRENT":
-                return bookingRepository.findAllByItemOwnerAndStartBeforeAndEndAfterOrderByStartDesc(userId, now, now);
+                return bookingRepository.findAllByItemOwnerAndStartBeforeAndEndAfterOrderByStartDesc(userId, now, now, pageable);
             default:
-                return bookingRepository.findAllByItemOwnerOrderByStartDesc(userId);
+                return bookingRepository.findAllByItemOwnerOrderByStartDesc(userId, pageable);
         }
     }
 

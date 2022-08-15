@@ -1,6 +1,8 @@
 package ru.practicum.shareit.booking;
 
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.booking.dto.BookingDto;
@@ -37,16 +39,24 @@ public class BookingController {
     }
 
     @GetMapping
-    public List<BookingDto> getAllByUser(@RequestHeader("X-Sharer-User-Id") Long userId, @RequestParam(defaultValue = "ALL") String state) {
-        return bookingService.getAllByUser(userId, state)
+    public List<BookingDto> getAllByUser(@RequestHeader("X-Sharer-User-Id") Long userId,
+                                         @RequestParam(defaultValue = "ALL") String state,
+                                         @RequestParam(defaultValue = "0") int from,
+                                         @RequestParam(defaultValue = "10") int size) {
+        Pageable pageable = PageRequest.of(from, size);
+        return bookingService.getAllByUser(userId, state, pageable)
                 .stream()
                 .map(BookingMapper::toBookingDto)
                 .collect(Collectors.toList());
     }
 
     @GetMapping("/owner")
-    public List<BookingDto> getAllByOwner(@RequestHeader("X-Sharer-User-Id") Long userId, @RequestParam(defaultValue = "ALL") String state) {
-        return bookingService.getAllByOwner(userId, state)
+    public List<BookingDto> getAllByOwner(@RequestHeader("X-Sharer-User-Id") Long userId,
+                                          @RequestParam(defaultValue = "ALL") String state,
+                                          @RequestParam(defaultValue = "0") int from,
+                                          @RequestParam(defaultValue = "10") int size) {
+        Pageable pageable = PageRequest.of(from, size);
+        return bookingService.getAllByOwner(userId, state, pageable)
                 .stream()
                 .map(BookingMapper::toBookingDto)
                 .collect(Collectors.toList());
