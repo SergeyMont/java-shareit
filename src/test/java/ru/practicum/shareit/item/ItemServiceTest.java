@@ -64,6 +64,8 @@ class ItemServiceTest {
     void getItemById() {
         ItemCommentDto itemCommentDto = ItemMapper.itemCommentDto(ItemMapper.toItemDto(item1));
         itemCommentDto.setComments(new ArrayList<>());
+        itemCommentDto.setLastBooking(bookingService.getLastByItemId(item1.getId()));
+        itemCommentDto.setNextBooking(bookingService.getNextByItemId(item1.getId()));
         assertEquals(itemCommentDto, itemService.getItemById(item1.getId(), user.getId()));
     }
 
@@ -71,7 +73,9 @@ class ItemServiceTest {
     void getAllByUserId() {
         ItemCommentDto itemCommentDto = ItemMapper.itemCommentDto(ItemMapper.toItemDto(item1));
         itemCommentDto.setComments(new ArrayList<>());
-        assertEquals(List.of(itemCommentDto), itemService.getAllByUserId(item.getOwner()));
+        itemCommentDto.setLastBooking(bookingService.getLastByItemId(item1.getId()));
+        itemCommentDto.setNextBooking(bookingService.getNextByItemId(item1.getId()));
+        assertEquals(List.of(itemCommentDto), itemService.getAllByUserId(item1.getOwner()));
     }
 
     @Test
@@ -79,6 +83,8 @@ class ItemServiceTest {
         Pageable pageable = PageRequest.of(0, 10);
         ItemCommentDto itemCommentDto = ItemMapper.itemCommentDto(ItemMapper.toItemDto(item1));
         itemCommentDto.setComments(new ArrayList<>());
+        itemCommentDto.setLastBooking(bookingService.getLastByItemId(item1.getId()));
+        itemCommentDto.setNextBooking(bookingService.getNextByItemId(item1.getId()));
         assertEquals(List.of(itemCommentDto), itemService.getAllByUserId(item.getOwner(), pageable));
 
     }
