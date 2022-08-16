@@ -19,12 +19,11 @@ import ru.practicum.shareit.user.User;
 import ru.practicum.shareit.user.repository.SpringUserRepository;
 
 import javax.transaction.Transactional;
-
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest
 @Transactional
@@ -42,6 +41,7 @@ class ItemServiceTest {
     Item item = new Item(1L, "Unit", "Super unit", true, user.getId(), null);
 
     private final Item item1;
+    private final ItemCommentDto itemCommentDto;
 
     @Autowired
     public ItemServiceTest(SpringCommentRepository commentRepository,
@@ -57,34 +57,26 @@ class ItemServiceTest {
         this.itemService = itemService;
         item1 = itemRepository.save(item);
         this.bookingService = bookingService;
+        itemCommentDto = ItemMapper.itemCommentDto(ItemMapper.toItemDto(item1));
+        itemCommentDto.setComments(new ArrayList<>());
+        itemCommentDto.setLastBooking(bookingService.getLastByItemId(item1.getId()));
+        itemCommentDto.setNextBooking(bookingService.getNextByItemId(item1.getId()));
 
     }
 
     @Test
     void getItemById() {
-        ItemCommentDto itemCommentDto = ItemMapper.itemCommentDto(ItemMapper.toItemDto(item1));
-        itemCommentDto.setComments(new ArrayList<>());
-        itemCommentDto.setLastBooking(bookingService.getLastByItemId(item1.getId()));
-        itemCommentDto.setNextBooking(bookingService.getNextByItemId(item1.getId()));
         assertEquals(itemCommentDto, itemService.getItemById(item1.getId(), user.getId()));
     }
 
     @Test
     void getAllByUserId() {
-        ItemCommentDto itemCommentDto = ItemMapper.itemCommentDto(ItemMapper.toItemDto(item1));
-        itemCommentDto.setComments(new ArrayList<>());
-        itemCommentDto.setLastBooking(bookingService.getLastByItemId(item1.getId()));
-        itemCommentDto.setNextBooking(bookingService.getNextByItemId(item1.getId()));
         assertEquals(List.of(itemCommentDto), itemService.getAllByUserId(item1.getOwner()));
     }
 
     @Test
     void testGetAllByUserId() {
         Pageable pageable = PageRequest.of(0, 10);
-        ItemCommentDto itemCommentDto = ItemMapper.itemCommentDto(ItemMapper.toItemDto(item1));
-        itemCommentDto.setComments(new ArrayList<>());
-        itemCommentDto.setLastBooking(bookingService.getLastByItemId(item1.getId()));
-        itemCommentDto.setNextBooking(bookingService.getNextByItemId(item1.getId()));
         assertEquals(List.of(itemCommentDto), itemService.getAllByUserId(item.getOwner(), pageable));
 
     }
