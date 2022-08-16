@@ -7,6 +7,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import ru.practicum.shareit.requests.dto.ExternalRequestDto;
 import ru.practicum.shareit.requests.dto.RequestMapper;
 import ru.practicum.shareit.user.User;
 
@@ -33,13 +34,15 @@ class ItemRequestControllerTest {
     ItemRequestService itemRequestService;
     User user = new User(1L, "Simple User", "user@mail.ru");
     ItemRequest itemRequest = new ItemRequest(1L, "text", user, LocalDateTime.now());
+    ExternalRequestDto externalRequestDto = new ExternalRequestDto();
 
     @Test
     void createNewRequest() throws Exception {
+        externalRequestDto.setDescription(itemRequest.getDescription());
         when(itemRequestService.addNewRequest(anyLong(), any())).thenReturn(RequestMapper.toItemRequestDto(itemRequest));
         mvc.perform(post("/requests")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(RequestMapper.toItemRequestDto(itemRequest)))
+                        .content(objectMapper.writeValueAsString(externalRequestDto))
                         .header("X-Sharer-User-Id", user.getId()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id", is(notNullValue())))

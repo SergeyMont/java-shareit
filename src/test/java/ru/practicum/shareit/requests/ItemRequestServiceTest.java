@@ -29,6 +29,7 @@ class ItemRequestServiceTest {
     private final UserService userService;
     User user = new User(1L, "Simple User", "user@mail.ru");
     ItemRequest itemRequest = new ItemRequest(1L, "text", user, LocalDateTime.now());
+    ExternalRequestDto externalRequestDto = new ExternalRequestDto();
 
     @Autowired
     public ItemRequestServiceTest(
@@ -44,7 +45,7 @@ class ItemRequestServiceTest {
 
     @Test
     void addNewRequest() {
-        ExternalRequestDto externalRequestDto = ExternalRequestDto.builder().description("text").build();
+        externalRequestDto.setDescription("text");
         ItemRequestDto itemRequest1 = itemRequestService.addNewRequest(itemRequest.getRequester().getId(), externalRequestDto);
         assertEquals(RequestMapper.toItemRequestDto(itemRequestRepository.findById(itemRequest1.getId()).orElseThrow()), itemRequest1);
     }
