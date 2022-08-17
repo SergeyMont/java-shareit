@@ -34,9 +34,9 @@ class ItemServiceTest {
 
     private final ItemService itemService;
     private final SpringUserRepository userRepository;
-    private User user = new User(1L, "Simple User", "user@mail.ru");
-    private User user2 = new User(2L, "Another User", "test@mail.ru");
-    private Item item = new Item(1L, "Unit", "Super unit", true, user.getId(), null);
+    private final User user = new User(1L, "Simple User", "user@mail.ru");
+    private final User user2 = new User(2L, "Another User", "test@mail.ru");
+    private final Item item = new Item(1L, "Unit", "Super unit", true, user.getId(), null);
 
     private final Item item1;
     private final ItemCommentDto itemCommentDto;

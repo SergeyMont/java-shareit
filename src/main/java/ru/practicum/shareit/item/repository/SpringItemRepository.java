@@ -14,6 +14,6 @@ public interface SpringItemRepository extends JpaRepository<Item, Long> {
 
     @Query(value = "select * from items as it where it.name" +
             "  like concat('%', ?1, '%') or it.description" +
-            "  like concat('%', ?2, '%') and available=true",nativeQuery = true)
-    List<Item> searchByNameAndDescription (String name, String description, Pageable pageable);
+            "  like concat('%', ?2, '%') and available=true", nativeQuery = true)
+    List<Item> searchByNameAndDescription(String name, String description, Pageable pageable);
 }
