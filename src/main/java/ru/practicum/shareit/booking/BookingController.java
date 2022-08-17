@@ -1,8 +1,6 @@
 package ru.practicum.shareit.booking;
 
 import lombok.AllArgsConstructor;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.booking.dto.BookingDto;
@@ -27,7 +25,8 @@ public class BookingController {
     }
 
     @PostMapping
-    public BookingDto createBooking(@Valid @RequestHeader("X-Sharer-User-Id") Long userId, @RequestBody ExternalBookingDto bookingDto) {
+    public BookingDto createBooking(@Valid @RequestHeader("X-Sharer-User-Id") Long userId,
+                                    @RequestBody ExternalBookingDto bookingDto) {
         return BookingMapper.toBookingDto(bookingService.createBooking(bookingDto, userId));
     }
 
@@ -43,8 +42,7 @@ public class BookingController {
                                          @RequestParam(defaultValue = "ALL") String state,
                                          @RequestParam(defaultValue = "0") int from,
                                          @RequestParam(defaultValue = "10") int size) {
-        Pageable pageable = PageRequest.of(from, size);
-        return bookingService.getAllByUser(userId, state, pageable)
+        return bookingService.getAllByUser(userId, state, from, size)
                 .stream()
                 .map(BookingMapper::toBookingDto)
                 .collect(Collectors.toList());
@@ -55,8 +53,7 @@ public class BookingController {
                                           @RequestParam(defaultValue = "ALL") String state,
                                           @RequestParam(defaultValue = "0") int from,
                                           @RequestParam(defaultValue = "10") int size) {
-        Pageable pageable = PageRequest.of(from, size);
-        return bookingService.getAllByOwner(userId, state, pageable)
+        return bookingService.getAllByOwner(userId, state, from, size)
                 .stream()
                 .map(BookingMapper::toBookingDto)
                 .collect(Collectors.toList());

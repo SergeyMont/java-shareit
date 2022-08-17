@@ -15,7 +15,6 @@ import ru.practicum.shareit.user.UserService;
 import ru.practicum.shareit.user.dto.UserMapper;
 
 import javax.transaction.Transactional;
-
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -30,10 +29,11 @@ class BookingServiceTest {
 
     private final ItemService itemService;
     private final UserService userService;
-    User user = new User(1L, "Simple User", "user@mail.ru");
-    User user2 = new User(2L, "Another User", "test@mail.ru");
-    Item item = new Item(1L, "Unit", "Super unit", true, user.getId(), null);
-    Booking booking = new Booking(1L, LocalDateTime.now(), LocalDateTime.now().plusDays(2), item, user2, Status.WAITING);
+    private User user = new User(1L, "Simple User", "user@mail.ru");
+    private User user2 = new User(2L, "Another User", "test@mail.ru");
+    private Item item = new Item(1L, "Unit", "Super unit", true, user.getId(), null);
+    private Booking booking = new Booking(1L, LocalDateTime.now(), LocalDateTime.now().plusDays(2),
+            item, user2, Status.WAITING);
 
     @Autowired
     public BookingServiceTest(SpringBookingRepository bookingRepository,
@@ -68,23 +68,24 @@ class BookingServiceTest {
                 .itemId(1L)
                 .build();
         Booking booking1 = bookingService.createBooking(externalBookingDto, 2L);
-        assertEquals(bookingRepository.findById(booking1.getId()).orElse(null), booking1);
+        assertEquals(booking1, bookingRepository.findById(booking1.getId()).orElse(null));
     }
 
     @Test
     void saveBooking() {
         bookingService.saveBooking(booking.getId(), true, user.getId());
-        assertEquals(bookingRepository.findById(booking.getId()).orElseThrow().getStatus(), Status.APPROVED);
+        assertEquals(Status.APPROVED, bookingRepository.findById(booking.getId()).orElseThrow().getStatus());
     }
 
     @Test
     void getAllByUser() {
-        assertEquals(List.of(booking), bookingService.getAllByUser(user2.getId(), "ALL", null));
+        assertEquals(List.of(booking), bookingService.getAllByUser(user2.getId(), "ALL", 0, 10));
     }
 
     @Test
     void getAllByOwner() {
-        assertEquals(List.of(booking), bookingService.getAllByOwner(user.getId(), "ALL", null));
+        assertEquals(List.of(booking),
+                bookingService.getAllByOwner(user.getId(), "ALL", 0, 10));
     }
 
     @Test
@@ -94,13 +95,15 @@ class BookingServiceTest {
 
     @Test
     void getLastByItemId() {
-        assertEquals(BookingMapper.toShortBookingDto(booking), bookingService.getLastByItemId(booking.getItem().getId()));
+        assertEquals(BookingMapper.toShortBookingDto(booking),
+                bookingService.getLastByItemId(booking.getItem().getId()));
     }
 
     @Test
     void getNextByItemId() {
         booking.setStart(LocalDateTime.now().plusDays(2));
         Booking booking1 = bookingRepository.save(booking);
-        assertEquals(BookingMapper.toShortBookingDto(booking1), bookingService.getNextByItemId(booking1.getItem().getId()));
+        assertEquals(BookingMapper.toShortBookingDto(booking1),
+                bookingService.getNextByItemId(booking1.getItem().getId()));
     }
 }

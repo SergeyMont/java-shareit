@@ -29,19 +29,19 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest(controllers = ItemController.class)
 class ItemControllerTest {
     @Autowired
-    MockMvc mvc;
+    private MockMvc mvc;
     @Autowired
-    ObjectMapper objectMapper;
+    private ObjectMapper objectMapper;
 
     @MockBean
-    ItemService itemService;
+    private ItemService itemService;
 
-    User user = new User(1L, "Simple User", "user@mail.ru");
-    User user2 = new User(2L, "Another User", "test@mail.ru");
-    Item item = new Item(1L, "Unit", "Super unit", true, user.getId(), null);
-    Comment comment = new Comment(1L, "simple text", item, user2, LocalDateTime.now());
-    ItemCommentDto itemCommentDto = ItemMapper.itemCommentDto(ItemMapper.toItemDto(item));
-    ItemDto itemDto = ItemMapper.toItemDto(item);
+    private User user = new User(1L, "Simple User", "user@mail.ru");
+    private User user2 = new User(2L, "Another User", "test@mail.ru");
+    private Item item = new Item(1L, "Unit", "Super unit", true, user.getId(), null);
+    private Comment comment = new Comment(1L, "simple text", item, user2, LocalDateTime.now());
+    private ItemCommentDto itemCommentDto = ItemMapper.itemCommentDto(ItemMapper.toItemDto(item));
+    private ItemDto itemDto = ItemMapper.toItemDto(item);
 
     @Test
     void findItemById() throws Exception {
@@ -55,7 +55,7 @@ class ItemControllerTest {
 
     @Test
     void findAllItemsByUserId() throws Exception {
-        when(itemService.getAllByUserId(anyLong(), any())).thenReturn(List.of(itemCommentDto));
+        when(itemService.getAllByUserId(anyLong(), anyInt(), anyInt())).thenReturn(List.of(itemCommentDto));
         mvc.perform(get("/items")
                         .header("X-Sharer-User-Id", user.getId()))
                 .andExpect(status().isOk())
@@ -90,7 +90,7 @@ class ItemControllerTest {
 
     @Test
     void searchByText() throws Exception {
-        when(itemService.searchItemByText(anyString(), any())).thenReturn(List.of(itemDto));
+        when(itemService.searchItemByText(anyString(), anyInt(), anyInt())).thenReturn(List.of(itemDto));
         mvc.perform(get("/items/search")
                         .param("text", "Super unit"))
                 .andExpect(status().isOk())

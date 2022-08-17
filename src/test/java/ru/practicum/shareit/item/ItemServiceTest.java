@@ -3,8 +3,6 @@ package ru.practicum.shareit.item;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import ru.practicum.shareit.booking.Booking;
 import ru.practicum.shareit.booking.BookingService;
 import ru.practicum.shareit.booking.dto.ExternalBookingDto;
@@ -36,9 +34,9 @@ class ItemServiceTest {
 
     private final ItemService itemService;
     private final SpringUserRepository userRepository;
-    User user = new User(1L, "Simple User", "user@mail.ru");
-    User user2 = new User(2L, "Another User", "test@mail.ru");
-    Item item = new Item(1L, "Unit", "Super unit", true, user.getId(), null);
+    private User user = new User(1L, "Simple User", "user@mail.ru");
+    private User user2 = new User(2L, "Another User", "test@mail.ru");
+    private Item item = new Item(1L, "Unit", "Super unit", true, user.getId(), null);
 
     private final Item item1;
     private final ItemCommentDto itemCommentDto;
@@ -76,8 +74,7 @@ class ItemServiceTest {
 
     @Test
     void testGetAllByUserId() {
-        Pageable pageable = PageRequest.of(0, 10);
-        assertEquals(List.of(itemCommentDto), itemService.getAllByUserId(item.getOwner(), pageable));
+        assertEquals(List.of(itemCommentDto), itemService.getAllByUserId(item.getOwner(), 0, 10));
 
     }
 
@@ -89,7 +86,7 @@ class ItemServiceTest {
 
     @Test
     void searchItemByText() {
-        assertEquals(List.of(ItemMapper.toItemDto(item1)), itemService.searchItemByText("nit", null));
+        assertEquals(List.of(ItemMapper.toItemDto(item1)), itemService.searchItemByText("nit", 0, 10));
     }
 
     @Test

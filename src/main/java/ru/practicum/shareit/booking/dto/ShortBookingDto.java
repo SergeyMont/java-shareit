@@ -22,7 +22,10 @@ public class ShortBookingDto {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         ShortBookingDto that = (ShortBookingDto) o;
-        return Objects.equals(id, that.id) && Objects.equals(itemId, that.itemId) && Objects.equals(bookerId, that.bookerId) && status == that.status;
+        return Objects.equals(id, that.id) &&
+                Objects.equals(itemId, that.itemId) &&
+                Objects.equals(bookerId, that.bookerId) &&
+                status == that.status;
     }
 
     @Override

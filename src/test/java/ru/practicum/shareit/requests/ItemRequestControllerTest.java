@@ -18,28 +18,31 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.mockito.Mockito.anyInt;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(controllers = ItemRequestController.class)
 class ItemRequestControllerTest {
     @Autowired
-    MockMvc mvc;
+    private MockMvc mvc;
     @Autowired
-    ObjectMapper objectMapper;
+    private ObjectMapper objectMapper;
 
     @MockBean
-    ItemRequestService itemRequestService;
-    User user = new User(1L, "Simple User", "user@mail.ru");
-    ItemRequest itemRequest = new ItemRequest(1L, "text", user, LocalDateTime.now());
-    ExternalRequestDto externalRequestDto = new ExternalRequestDto();
+    private ItemRequestService itemRequestService;
+    private User user = new User(1L, "Simple User", "user@mail.ru");
+    private ItemRequest itemRequest = new ItemRequest(1L, "text", user, LocalDateTime.now());
+    private ExternalRequestDto externalRequestDto = new ExternalRequestDto();
 
     @Test
     void createNewRequest() throws Exception {
         externalRequestDto.setDescription(itemRequest.getDescription());
-        when(itemRequestService.addNewRequest(anyLong(), any())).thenReturn(RequestMapper.toItemRequestDto(itemRequest));
+        when(itemRequestService.addNewRequest(anyLong(), any()))
+                .thenReturn(RequestMapper.toItemRequestDto(itemRequest));
         mvc.perform(post("/requests")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(externalRequestDto))
@@ -52,7 +55,8 @@ class ItemRequestControllerTest {
 
     @Test
     void getAllRequestsByUser() throws Exception {
-        when(itemRequestService.getAllByUserId(anyLong())).thenReturn(List.of(RequestMapper.toItemRequestDto(itemRequest)));
+        when(itemRequestService.getAllByUserId(anyLong()))
+                .thenReturn(List.of(RequestMapper.toItemRequestDto(itemRequest)));
         mvc.perform(get("/requests")
                         .header("X-Sharer-User-Id", user.getId()))
                 .andExpect(status().isOk())
@@ -62,7 +66,8 @@ class ItemRequestControllerTest {
 
     @Test
     void getAllRequests() throws Exception {
-        when(itemRequestService.getAllRequestOrderByCreated(anyLong(), any())).thenReturn(List.of(RequestMapper.toItemRequestDto(itemRequest)));
+        when(itemRequestService.getAllRequestOrderByCreated(anyLong(), anyInt(), anyInt()))
+                .thenReturn(List.of(RequestMapper.toItemRequestDto(itemRequest)));
         mvc.perform(get("/requests/all")
                         .header("X-Sharer-User-Id", user.getId()))
                 .andExpect(status().isOk())
@@ -72,7 +77,8 @@ class ItemRequestControllerTest {
 
     @Test
     void getRequestById() throws Exception {
-        when(itemRequestService.getRequestById(anyLong(), anyLong())).thenReturn(RequestMapper.toItemRequestDto(itemRequest));
+        when(itemRequestService.getRequestById(anyLong(), anyLong()))
+                .thenReturn(RequestMapper.toItemRequestDto(itemRequest));
         mvc.perform(get("/requests/{id}", itemRequest.getId())
                         .header("X-Sharer-User-Id", user.getId()))
                 .andExpect(status().isOk())

@@ -1,9 +1,6 @@
 package ru.practicum.shareit.requests;
 
 import lombok.AllArgsConstructor;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.requests.dto.ExternalRequestDto;
@@ -21,7 +18,8 @@ public class ItemRequestController {
     private final ItemRequestService itemRequestService;
 
     @PostMapping
-    public ItemRequestDto createNewRequest(@Valid @RequestHeader("X-Sharer-User-Id") Long userId, @RequestBody ExternalRequestDto requestDto) {
+    public ItemRequestDto createNewRequest(@Valid @RequestHeader("X-Sharer-User-Id") Long userId,
+                                           @RequestBody ExternalRequestDto requestDto) {
         return itemRequestService.addNewRequest(userId, requestDto);
     }
 
@@ -34,12 +32,12 @@ public class ItemRequestController {
     public List<ItemRequestDto> getAllRequests(@RequestHeader("X-Sharer-User-Id") Long userId,
                                                @RequestParam(defaultValue = "0") int from,
                                                @RequestParam(defaultValue = "10") int size) {
-        Pageable pageable = PageRequest.of(from, size, Sort.by("created").descending());
-        return itemRequestService.getAllRequestOrderByCreated(userId,pageable);
+        return itemRequestService.getAllRequestOrderByCreated(userId, from, size);
     }
 
     @GetMapping("{id}")
-    public ItemRequestDto getRequestById(@RequestHeader("X-Sharer-User-Id") Long userId, @PathVariable Long id) {
+    public ItemRequestDto getRequestById(@RequestHeader("X-Sharer-User-Id") Long userId,
+                                         @PathVariable Long id) {
         return itemRequestService.getRequestById(userId, id);
     }
 }

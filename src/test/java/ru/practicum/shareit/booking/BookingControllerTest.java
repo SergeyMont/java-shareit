@@ -27,17 +27,18 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class BookingControllerTest {
 
     @Autowired
-    MockMvc mvc;
+    private MockMvc mvc;
     @Autowired
-    ObjectMapper objectMapper;
+    private ObjectMapper objectMapper;
 
     @MockBean
-    BookingService bookingService;
+    private BookingService bookingService;
 
-    User user = new User(1L, "Simple User", "user@mail.ru");
-    User user2 = new User(2L, "Another User", "test@mail.ru");
-    Item item = new Item(1L, "Unit", "Super unit", true, user.getId(), null);
-    Booking booking = new Booking(1L, LocalDateTime.now(), LocalDateTime.now().plusHours(2L), item, user2, Status.WAITING);
+    private User user = new User(1L, "Simple User", "user@mail.ru");
+    private User user2 = new User(2L, "Another User", "test@mail.ru");
+    private Item item = new Item(1L, "Unit", "Super unit", true, user.getId(), null);
+    private Booking booking = new Booking(1L, LocalDateTime.now(), LocalDateTime.now().plusHours(2L),
+            item, user2, Status.WAITING);
 
     @Test
     void getById() throws Exception {
@@ -76,7 +77,7 @@ class BookingControllerTest {
 
     @Test
     void getAllByUser() throws Exception {
-        when(bookingService.getAllByUser(anyLong(), anyString(), any())).thenReturn(List.of(booking));
+        when(bookingService.getAllByUser(anyLong(), anyString(), anyInt(), anyInt())).thenReturn(List.of(booking));
         mvc.perform(get("/bookings")
                         .header("X-Sharer-User-Id", user.getId()))
                 .andExpect(status().isOk())
@@ -86,7 +87,7 @@ class BookingControllerTest {
 
     @Test
     void getAllByOwner() throws Exception {
-        when(bookingService.getAllByOwner(anyLong(), anyString(), any())).thenReturn(List.of(booking));
+        when(bookingService.getAllByOwner(anyLong(), anyString(), anyInt(), anyInt())).thenReturn(List.of(booking));
         mvc.perform(get("/bookings/owner")
                         .header("X-Sharer-User-Id", user.getId()))
                 .andExpect(status().isOk())
