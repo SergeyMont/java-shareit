@@ -3,6 +3,7 @@ package ru.practicum.shareit.item.model;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.lang.Nullable;
 
 import javax.persistence.*;
 
@@ -21,6 +22,7 @@ public class Item {
     private Boolean available;
     @Column(name = "owner_id", nullable = false)
     private Long owner;
+    @Nullable
     @Column(name = "request_id")
-    private Long request;
+    private Long requestId;
 }

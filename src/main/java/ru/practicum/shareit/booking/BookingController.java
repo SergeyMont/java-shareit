@@ -25,7 +25,8 @@ public class BookingController {
     }
 
     @PostMapping
-    public BookingDto createBooking(@Valid @RequestHeader("X-Sharer-User-Id") Long userId, @RequestBody ExternalBookingDto bookingDto) {
+    public BookingDto createBooking(@Valid @RequestHeader("X-Sharer-User-Id") Long userId,
+                                    @RequestBody ExternalBookingDto bookingDto) {
         return BookingMapper.toBookingDto(bookingService.createBooking(bookingDto, userId));
     }
 
@@ -37,16 +38,22 @@ public class BookingController {
     }
 
     @GetMapping
-    public List<BookingDto> getAllByUser(@RequestHeader("X-Sharer-User-Id") Long userId, @RequestParam(defaultValue = "ALL") String state) {
-        return bookingService.getAllByUser(userId, state)
+    public List<BookingDto> getAllByUser(@RequestHeader("X-Sharer-User-Id") Long userId,
+                                         @RequestParam(defaultValue = "ALL") String state,
+                                         @RequestParam(defaultValue = "0") int from,
+                                         @RequestParam(defaultValue = "10") int size) {
+        return bookingService.getAllByUser(userId, state, from, size)
                 .stream()
                 .map(BookingMapper::toBookingDto)
                 .collect(Collectors.toList());
     }
 
     @GetMapping("/owner")
-    public List<BookingDto> getAllByOwner(@RequestHeader("X-Sharer-User-Id") Long userId, @RequestParam(defaultValue = "ALL") String state) {
-        return bookingService.getAllByOwner(userId, state)
+    public List<BookingDto> getAllByOwner(@RequestHeader("X-Sharer-User-Id") Long userId,
+                                          @RequestParam(defaultValue = "ALL") String state,
+                                          @RequestParam(defaultValue = "0") int from,
+                                          @RequestParam(defaultValue = "10") int size) {
+        return bookingService.getAllByOwner(userId, state, from, size)
                 .stream()
                 .map(BookingMapper::toBookingDto)
                 .collect(Collectors.toList());

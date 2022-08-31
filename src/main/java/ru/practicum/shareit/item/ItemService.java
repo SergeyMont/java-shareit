@@ -1,6 +1,8 @@
 package ru.practicum.shareit.item;
 
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.booking.BookingService;
 import ru.practicum.shareit.booking.exceptions.NotSuchBookingException;
@@ -34,7 +36,10 @@ public class ItemService {
             itemDto = ItemMapper.toItemDto(itemRepository.findById(itemId).get());
         } else throw new ItemNotFoundException("Item not found");
         ItemCommentDto result = ItemMapper.itemCommentDto(itemDto);
-        result.setComments(commentRepository.findAllByItemId(itemId).stream().map(CommentMapper::toCommentDto).collect(Collectors.toList()));
+        result.setComments(commentRepository.findAllByItemId(itemId)
+                .stream()
+                .map(CommentMapper::toCommentDto)
+                .collect(Collectors.toList()));
         if (Objects.equals(itemRepository.findById(itemId).get().getOwner(), userId)) {
             result.setLastBooking(bookingService.getLastByItemId(itemId));
             result.setNextBooking(bookingService.getNextByItemId(itemId));
@@ -51,7 +56,28 @@ public class ItemService {
                     ItemCommentDto itemCommentDto = ItemMapper.itemCommentDto(itemDto);
                     itemCommentDto.setLastBooking(bookingService.getLastByItemId(itemDto.getId()));
                     itemCommentDto.setNextBooking(bookingService.getNextByItemId(itemDto.getId()));
-                    itemCommentDto.setComments(commentRepository.findAllByItemId(itemDto.getId()).stream().map(CommentMapper::toCommentDto).collect(Collectors.toList()));
+                    itemCommentDto.setComments(commentRepository.findAllByItemId(itemDto.getId())
+                            .stream()
+                            .map(CommentMapper::toCommentDto)
+                            .collect(Collectors.toList()));
+                    return itemCommentDto;
+                })
+                .collect(Collectors.toList());
+    }
+
+    public List<ItemCommentDto> getAllByUserId(Long userId, int from, int size) {
+        Pageable pageable = PageRequest.of(from, size);
+        return itemRepository.findAllByOwner(userId, pageable)
+                .stream()
+                .map(ItemMapper::toItemDto)
+                .map(itemDto -> {
+                    ItemCommentDto itemCommentDto = ItemMapper.itemCommentDto(itemDto);
+                    itemCommentDto.setLastBooking(bookingService.getLastByItemId(itemDto.getId()));
+                    itemCommentDto.setNextBooking(bookingService.getNextByItemId(itemDto.getId()));
+                    itemCommentDto.setComments(commentRepository.findAllByItemId(itemDto.getId())
+                            .stream()
+                            .map(CommentMapper::toCommentDto)
+                            .collect(Collectors.toList()));
                     return itemCommentDto;
                 })
                 .collect(Collectors.toList());
@@ -69,7 +95,10 @@ public class ItemService {
     }
 
     public ItemDto updateItemDto(ItemDto itemDto, Long userId) {
-        if (!userRepository.existsById(userId) || !getAllByUserId(userId).stream().map(ItemCommentDto::getId).collect(Collectors.toList()).contains(itemDto.getId())) {
+        if (!userRepository.existsById(userId) || !getAllByUserId(userId)
+                .stream().map(ItemCommentDto::getId)
+                .collect(Collectors.toList())
+                .contains(itemDto.getId())) {
             throw new WrongUserChangeItemException("Wrong user can't change other users items");
         }
         if (itemDto.getName() == null && itemDto.getDescription() == null) {
@@ -89,11 +118,13 @@ public class ItemService {
         return ItemMapper.toItemDto(itemRepository.save(ItemMapper.toItem(itemDto)));
     }
 
-    public List<ItemDto> searchItemByText(String text) {
+    public List<ItemDto> searchItemByText(String text, int from, int size) {
+        Pageable pageable = PageRequest.of(from, size);
         if (text.isEmpty()) {
             return new ArrayList<>();
         }
-        return itemRepository.findAllByNameContainingIgnoreCaseOrDescriptionContainingIgnoreCaseAndAvailableTrue(text, text)
+        return itemRepository
+                .searchByNameAndDescription(text, text, pageable)
                 .stream()
                 .map(ItemMapper::toItemDto)
                 .collect(Collectors.toList());

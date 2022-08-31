@@ -13,6 +13,7 @@ public class ItemCommentDto {
     private String name;
     private String description;
     private Boolean available;
+    private Long requestId;
     private List<CommentDto> comments;
     private ShortBookingDto lastBooking;
     private ShortBookingDto nextBooking;
