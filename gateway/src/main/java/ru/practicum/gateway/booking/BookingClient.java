@@ -10,6 +10,7 @@ import org.springframework.web.util.DefaultUriBuilderFactory;
 import ru.practicum.gateway.client.BaseClient;
 
 import java.util.Map;
+
 @Service
 public class BookingClient extends BaseClient {
 
