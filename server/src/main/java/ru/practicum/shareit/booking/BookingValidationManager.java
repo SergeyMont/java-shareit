@@ -2,9 +2,7 @@ package ru.practicum.shareit.booking;
 
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
-import org.springframework.util.ObjectUtils;
 import ru.practicum.shareit.booking.dto.ExternalBookingDto;
-import ru.practicum.shareit.booking.exceptions.StateValidationException;
 import ru.practicum.shareit.booking.exceptions.ValidationBookingOwnerException;
 import ru.practicum.shareit.item.exceptions.ItemValidationException;
 import ru.practicum.shareit.item.exceptions.UserNotFoundException;
