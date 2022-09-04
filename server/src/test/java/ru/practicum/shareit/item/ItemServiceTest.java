@@ -101,6 +101,7 @@ class ItemServiceTest {
         bookingService.saveBooking(booking.getId(), true, user.getId());
         ExternalCommentDto externalCommentDto = new ExternalCommentDto();
         externalCommentDto.setText("text");
+        externalCommentDto.setCreated(LocalDateTime.now());
         Thread.sleep(2000);
         Comment comment1 = itemService.addComment(
                 item1.getId(),
