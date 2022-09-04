@@ -5,7 +5,6 @@ import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.exceptions.ValidationEmailNullException;
 
-import javax.validation.Valid;
 import java.util.List;
 
 
@@ -26,7 +25,7 @@ public class UserController {
     }
 
     @PostMapping
-    public UserDto createUser(@Valid @RequestBody UserDto userDto) {
+    public UserDto createUser(@RequestBody UserDto userDto) {
         if (userDto.getEmail() == null) {
             throw new ValidationEmailNullException("Email should be not null");
         }
@@ -34,8 +33,7 @@ public class UserController {
     }
 
     @PatchMapping("/{userId}")
-    public UserDto updateUser(@Valid @PathVariable("userId") Long userId, @RequestBody UserDto userDto) {
-        //validateUserEmail(userDto);
+    public UserDto updateUser(@PathVariable("userId") Long userId, @RequestBody UserDto userDto) {
         userDto.setId(userId);
         return userService.updateUserDto(userDto);
     }

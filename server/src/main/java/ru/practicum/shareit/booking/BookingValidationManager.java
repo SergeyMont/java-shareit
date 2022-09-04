@@ -29,12 +29,6 @@ public class BookingValidationManager {
         }
     }
 
-    public void validateState(String state) {
-        if (!ObjectUtils.containsConstant(State.values(), state)) {
-            throw new StateValidationException("Unknown state: " + state);
-        }
-    }
-
     public void validateBookingOwner(Booking booking, Long userId) {
         if (!Objects.equals(booking.getItem().getOwner(), userId))
             throw new ValidationBookingOwnerException("You are not owner");

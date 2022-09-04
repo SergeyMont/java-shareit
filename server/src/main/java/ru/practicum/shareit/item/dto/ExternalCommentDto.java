@@ -7,5 +7,5 @@ import java.time.LocalDateTime;
 @Data
 public class ExternalCommentDto {
     private String text;
-    private LocalDateTime created = LocalDateTime.now();
+    private LocalDateTime created;
 }

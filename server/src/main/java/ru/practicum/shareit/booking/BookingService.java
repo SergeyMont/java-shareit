@@ -48,7 +48,6 @@ public class BookingService {
     }
 
     public List<Booking> getAllByUser(Long userId, String state, int from, int size) {
-        validationManager.validateState(state);
         validationManager.validateUser(userId);
         LocalDateTime now = LocalDateTime.now();
         Pageable pageable = PageRequest.of(from, size);
@@ -69,7 +68,6 @@ public class BookingService {
     }
 
     public List<Booking> getAllByOwner(Long userId, String state, int from, int size) {
-        validationManager.validateState(state);
         validationManager.validateUser(userId);
         LocalDateTime now = LocalDateTime.now();
         Pageable pageable = PageRequest.of(from, size);
