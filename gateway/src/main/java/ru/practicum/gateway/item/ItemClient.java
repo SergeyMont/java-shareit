@@ -36,7 +36,7 @@ public class ItemClient extends BaseClient {
     }
 
     public Object search(String text, int from, int size) {
-        return get("/search",  -1L, Map.of("text", text, "from", from, "size", size));
+        return get("/search", -1L, Map.of("text", text, "from", from, "size", size));
     }
 
     public Object createComment(long itemId, long userId, CommentDto commentDto) {

@@ -6,6 +6,7 @@ import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.util.ObjectUtils;
 import org.springframework.web.util.DefaultUriBuilderFactory;
 import ru.practicum.gateway.client.BaseClient;
 
@@ -26,7 +27,11 @@ public class BookingClient extends BaseClient {
         );
     }
 
-    public ResponseEntity<Object> getBookings(long userId, State state, Integer from, Integer size) {
+    public ResponseEntity<Object> getBookings(long userId, String stateParam, Integer from, Integer size) {
+        if (!ObjectUtils.containsConstant(State.values(), stateParam)) {
+            throw new IllegalArgumentException("Unknown state: " + stateParam);
+        }
+        State state = State.valueOf(stateParam);
         Map<String, Object> parameters = Map.of(
                 "state", state.name(),
                 "from", from,

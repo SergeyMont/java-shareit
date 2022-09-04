@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.util.ObjectUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,23 +24,18 @@ public class BookingController {
                                               @RequestParam(name = "state", defaultValue = "all") String stateParam,
                                               @PositiveOrZero @RequestParam(name = "from", defaultValue = "0") Integer from,
                                               @Positive @RequestParam(name = "size", defaultValue = "10") Integer size) {
-        validateState(stateParam);
-        State state = State.valueOf(stateParam);
         log.info("Get booking with state {}, userId={}, from={}, size={}", stateParam, userId, from, size);
-        return bookingClient.getBookings(userId, state, from, size);
+        return bookingClient.getBookings(userId, stateParam, from, size);
     }
-
 
 
     @GetMapping("/owner")
     public ResponseEntity<Object> getOwnerBookings(@RequestHeader("X-Sharer-User-Id") long userId,
-                                              @RequestParam(name = "state", defaultValue = "all") String stateParam,
-                                              @PositiveOrZero @RequestParam(name = "from", defaultValue = "0") Integer from,
-                                              @Positive @RequestParam(name = "size", defaultValue = "10") Integer size) {
-        validateState(stateParam);
-        State state = State.valueOf(stateParam);
+                                                   @RequestParam(name = "state", defaultValue = "all") String stateParam,
+                                                   @PositiveOrZero @RequestParam(name = "from", defaultValue = "0") Integer from,
+                                                   @Positive @RequestParam(name = "size", defaultValue = "10") Integer size) {
         log.info("Get booking with state {}, userId={}, from={}, size={}", stateParam, userId, from, size);
-        return bookingClient.getBookings(userId, state, from, size);
+        return bookingClient.getBookings(userId, stateParam, from, size);
     }
 
     @PostMapping
@@ -64,11 +58,5 @@ public class BookingController {
                          @RequestHeader("X-Sharer-User-Id") long userId) {
         log.info("update booking with id={} set approved={}", id, approved);
         return bookingClient.updateBooking(id, userId, approved);
-    }
-
-    private void validateState(String stateParam) {
-        if (!ObjectUtils.containsConstant(State.values(), stateParam)) {
-            throw new IllegalArgumentException("Unknown state: " + stateParam);
-        }
     }
 }
